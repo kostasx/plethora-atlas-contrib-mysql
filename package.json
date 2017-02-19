@@ -1,0 +1,15 @@
+{
+  "author": {
+    "name": "kostasx",
+    "email": "minaidisk@gmail.com"
+  },
+  "dependencies": {
+    "colors": "^1.1.2",
+    "mysql": "^2.13.0"
+  },
+  "description": "MySQL Utilities for the Plethora Atlas Project",
+  "license": "ISC",
+  "main": "mysql.js",
+  "name": "plethora-atlas-contrib-mysql",
+  "version": "0.1.0"
+}
