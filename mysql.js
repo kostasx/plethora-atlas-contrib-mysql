@@ -54,7 +54,9 @@ db = {
             dname: options.dbname
           });
         } else {
-          Helpers.notify('Database created succesfully!');
+          Helpers.notify({
+            msg: 'Database created succesfully!'
+          });
           return resolve({
             msg: "Database created succesfully!",
             dbname: options.dbname

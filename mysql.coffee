@@ -36,7 +36,7 @@ db =
 					console.log "Error: createDatabase - #{err}".red
 					return reject({ msg: "createDatabase - Error", error: err, dname: options.dbname }) 
 				else
-					Helpers.notify('Database created succesfully!')
+					Helpers.notify({ msg: 'Database created succesfully!' })
 					return resolve({ msg: "Database created succesfully!", dbname: options.dbname })
 
 			connection.end()
