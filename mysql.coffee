@@ -3,18 +3,24 @@ colors = require 'colors'
 
 db = 
 
-	connect: (options)->
+	init: (options)->
+
+		db.host     = options.host
+		db.user     = options.user
+		db.password = options.password
+
+	connect: ()->
 
 		return mysql.createConnection
-			host     : options.host
-			user     : options.user
-			password : options.password
+			host     : db.host
+			user     : db.user
+			password : db.password
 
 	databaseExists: (options)->
 
 		new Promise((resolve,reject)->
 
-			connection = db.connect({ host: options.host, user: options.user, password: options.password })
+			connection = db.connect()
 			connection.query "USE #{options.dbname}", (err, rows, fields) ->
 
 				if err
@@ -30,7 +36,7 @@ db =
 
 		new Promise((resolve,reject)->
 
-			connection = db.connect({ host: options.host, user: options.user, password: options.password })
+			connection = db.connect()
 			connection.query 'create database `' + options.dbname + '`', (err, rows, fields) ->
 				if err
 					console.log "Error: createDatabase - #{err}".red
@@ -47,7 +53,7 @@ db =
 
 		new Promise((resolve,reject)->
 
-			connection = db.connect({ host: options.host, user: options.user, password: options.password })
+			connection = db.connect()
 			connection.query( options.query, (err, rows, fields)->
 				if err 
 					return resolve({ msg: "Error executing query: #{options.query}" })
@@ -63,7 +69,7 @@ db =
 
 		new Promise((resolve,reject)->
 
-			connection = db.connect({ host: options.host, user: options.user, password: options.password })
+			connection = db.connect()
 			connection.query 'drop database `' + options.dbname + '`', (err, rows, fields) ->
 				if err
 					console.log "Error: dropDatabase - #{err}".red
@@ -81,7 +87,7 @@ db =
 
 		new Promise((resolve,reject)->
 	
-			connection = db.connect({ host: options.host, user: options.user, password: options.password })
+			connection = db.connect()
 			connection.query 'show databases', (err, rows, fields) ->
 
 				if err then return reject({ msg: "Error", error: err })
@@ -118,7 +124,7 @@ db =
 			if options.write
 				cmd = "#{cmd} > #{dbname}.sql"
 
-			db.databaseExists({ dbname: dbname, host: options.host, user: options.user, password: options.password })
+			db.databaseExists({ dbname: dbname, host: db.host, user: db.user, password: db.password })
 			.then((res)-> 
 
 				# res.exists === false  

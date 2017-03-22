@@ -1,10 +1,5 @@
 colors = require 'colors'
 
-dbConfig =
-  host     : config.database.host
-  user     : config.database.user
-  password : config.database.password
-
 initCommands = (program)->
 
     program
@@ -18,75 +13,54 @@ initCommands = (program)->
       .option('--dump-db <dbname>','Dump selected MySQL Database')
       .action (options) ->
 
-        # CREATE DATABASE 
-        if options.createDb
+        Helpers.configurator().then((res)->
 
-          console.log "Creating Database #{options.createDb}..."
           database = require './mysql'
-          database.databaseExists({ 
+          database.init({
 
-            dbname   : options.createDb
-            host     : dbConfig.host
-            user     : dbConfig.user
-            password : dbConfig.password 
+            host     : config.mysql.host
+            user     : config.mysql.user
+            password : config.mysql.password
 
           })
-          .then(database.createDatabase.bind(null, { 
 
-            dbname   : options.createDb 
-            host     : dbConfig.host
-            user     : dbConfig.user
-            password : dbConfig.password
+          # CREATE DATABASE 
+          if options.createDb
 
-          }))
-          .then( (res)-> console.log res )
+            console.log "Creating Database #{options.createDb}..."
+            database.databaseExists({ dbname: options.createDb })
+            .then(database.createDatabase.bind(null, { dbname: options.createDb }))
+            .then( (res)-> console.log res )
 
-        # DROP DATABASE 
-        if options.dropDb or options.rmDb or options.delDb
+          # DROP DATABASE 
+          if options.dropDb or options.rmDb or options.delDb
 
-          console.log "Removing Database #{options.dropDb}..."
-          database = require './mysql'
-          database.dropDatabase({ 
+            console.log "Removing Database #{options.dropDb}..."
+            database.dropDatabase({ dbname: options.dropDb })
+            .then( (res)-> console.log res )
 
-            host     : dbConfig.host
-            user     : dbConfig.user
-            password : dbConfig.password
-            dbname   : options.dropDb 
+          # SHOW DATABASES
+          if options.showDb
 
-          })
-          .then( (res)-> console.log res )
+            console.log "Getting Databases..."
+            database.getDatabases()
+            .then( (res)-> console.log res )
+            .catch( (e)-> console.log e )
 
-        # SHOW DATABASES
-        if options.showDb
+          # DUMP DATABASE
+          if options.dumpDb
 
-          console.log "Getting Databases..."
-          database = require './mysql'
-          database.getDatabases({
+            console.log "Dumping Database #{options.dumpDb}..."
+            database.mySqlDump({ 
 
-            host     : dbConfig.host
-            user     : dbConfig.user
-            password : dbConfig.password
+              dbname        : options.dumpDb
+              mysqldump_bin : config.database.mysqldump_bin 
+              write         : true
 
-          })
-          .then( (res)-> console.log res )
-          .catch( (e)-> console.log e )
+            })
+            .then( (res)-> console.log res )
+            .catch( (e)-> console.log e )
 
-        # DUMP DATABASE
-        if options.dumpDb
-
-          console.log "Dumping Database #{options.dumpDb}..."
-          database = require './mysql'
-          database.mySqlDump({ 
-
-            dbname        : options.dumpDb
-            mysqldump_bin : config.database.mysqldump_bin 
-            host          : dbConfig.host
-            user          : dbConfig.user
-            password      : dbConfig.password
-            write         : true
-
-          })
-          .then( (res)-> console.log res )
-          .catch( (e)-> console.log e )
+        ).catch(console.log)
 
 module.exports = initCommands

@@ -1,0 +1,6 @@
+{
+	"user"          : "root",
+	"password"      : "mysqlpass",
+	"host"          : "127.0.0.1",
+	"mysqldump_bin" : "/Applications/MAMP/Library/bin/mysqldump"
+}	
